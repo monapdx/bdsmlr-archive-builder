@@ -1,190 +1,220 @@
 # bdsmlr-archive
 
-Generate a static, offline-first HTML archive from BDSMLR JSON exports
---- with optional full media mirroring.
+Generate a static, offline-first HTML archive from **BDSMLR** JSON exports — with optional full media mirroring (so it works fully offline).
 
-This tool was originally created to archive my own blog content from
-**bdsmlr.com** after exporting post data using a Chrome scraper
-extension.
+This tool was originally created to archive my own blog content from **bdsmlr.com** after exporting post data using a Chrome scraper extension.
 
 It turns exported `.json` files into:
 
--   A fully navigable static website
--   Search + tag filtering
--   Per-post HTML pages
--   Optional local media downloads (true offline mirror)
--   Provenance metadata
--   Double-clickable output (no server required)
+- A browsable static website (index + per-post pages)
+- Search + tag filtering
+- Optional local media downloads (true offline mirror)
+- Provenance metadata
+- **Double-clickable output** (no server required)
 
-------------------------------------------------------------------------
+---
 
 ## 🛠 How This Was Used (My Workflow)
 
 I used the Chrome extension:
 
-**Easy Scraper**\
+**Easy Scraper (One Click Web Scraper)**  
 https://chromewebstore.google.com/detail/easy-scraper-one-click-we/cljbfnedccphacfneigoegkiieckjndh
 
-to scrape my own blog pages on `bdsmlr.com` and export the results as
-`.json` files.
+…to scrape my own blog pages on `bdsmlr.com` and export the results as `.json` files.
 
-This tool then converts those exported JSON files into a structured,
-offline HTML archive.
+This tool converts those exported JSON files into a structured, offline HTML archive.
 
-> ⚠️ Important: Only scrape and archive content you have permission to
-> access and store.
+> ⚠️ Important: Only scrape and archive content you have permission to access and store.
 
-------------------------------------------------------------------------
+---
+
+## ✅ Quick Start (Beginner-Friendly)
+
+**Goal:** “Drop the JSON files in a folder → run one command → open the archive.”
+
+1) Put your exported `.json` files into the `exports/` folder (next to this project).
+
+2) Build your archive (recommended: local media mirroring):
+
+```bash
+bdsmlr-archive build
+```
+
+3) Open the result:
+
+- `output/index.html` (double-click)
+
+### What `bdsmlr-archive build` does by default
+
+If you do not pass any arguments, the tool will:
+
+- Read all `.json` files from `./exports/`
+- Write the archive to `./output/`
+- **Download media** and embed it locally (best chance of working offline)
+
+This “no-args” default is intentional to make the tool accessible for non-technical users.
+
+---
 
 ## 📦 What This Tool Generates
 
-    site/
-      index.html
-      posts/
-      media/            (if --download-media enabled)
-      data/
-        posts.json
-        posts.js
-        tags.json
-        provenance.json
-        media_map.json
+```
+output/
+  index.html
+  posts/
+  media/            (if media is downloaded)
+  data/
+    posts.json
+    posts.js
+    tags.json
+    provenance.json
+    media_map.json
+```
 
-The result: 
-- Works offline 
-- Requires no backend 
-- No database 
-- No JavaScript framework 
-- No build tools 
+The result:
+
+- Works offline
+- Requires no backend
+- No database
+- No JavaScript framework
+- No build tools
 - Just static files
 
-------------------------------------------------------------------------
+---
 
 ## 🚀 Installation
 
 Clone the repo:
 
-    git clone https://github.com/YOURNAME/bdsmlr-archive-builder.git
-    cd bdsmlr-archive-builder
+```bash
+git clone https://github.com/monapdx/bdsmlr-archive-builder.git
+cd bdsmlr-archive-builder
+```
 
 Install in editable mode:
 
-    pip install -e .
+```bash
+pip install -e .
+```
 
 Python 3.9+ required.
 
-------------------------------------------------------------------------
+> Tip: If you prefer not to use editable installs, you can also run the CLI via:
+> `python -m bdsmlr_archive.cli --help`
 
-## 🧪 Basic Usage
+---
 
-Build a metadata-only archive:
+## 🧪 Usage
 
-    bdsmlr-archive build --input bdsmlr-*.json --out site
+### Build using the beginner defaults
 
-Build a full offline mirror (recommended):
+```bash
+bdsmlr-archive build
+```
 
-    bdsmlr-archive build --input bdsmlr-*.json --out site --download-media
+### Build with explicit input files
 
-Then open:
+```bash
+bdsmlr-archive build --input exports/file1.json exports/file2.json
+```
 
-    site/index.html
+### Build from a specific exports folder
 
-Double-click. No server required.
+```bash
+bdsmlr-archive build --input-dir exports --out output
+```
 
-------------------------------------------------------------------------
+### Metadata-only (no embeds, no downloads)
 
-## ⚙️ Options
+```bash
+bdsmlr-archive build --no-media
+```
 
-  -----------------------------------------------------------------------
-  Option                       Description
-  ---------------------------- ------------------------------------------
-  `--download-media`           Download all media locally into
-                               `site/media/`
+### Remote hotlink embed (not recommended; often blocked)
 
-  `--embed-remote`             Embed remote media URLs (often blocked by
-                               CDN hotlink protection)
+```bash
+bdsmlr-archive build --embed-remote
+```
 
-  `--include-captions`         Include caption/comment lines in post
-                               pages
+---
 
-  `--max-media-per-post`       Limit number of media items per post
-                               (default 60)
+## ⚙️ Options (build)
 
-  `--sleep`                    Delay between downloads (default 0.10s)
+| Option | Description |
+|--------|------------|
+| `--input [FILES...]` | Input JSON file(s). If omitted, uses all `.json` in `./exports/` |
+| `--input-dir DIR` | Directory containing `.json` exports |
+| `--out DIR` | Output directory (default: `output`) |
+| `--download-media` | Download all media locally into `out/media/` (recommended) |
+| `--embed-remote` | Embed remote media URLs (hotlinking; often blocked by CDN protection) |
+| `--no-media` | Do not embed or download media (metadata-only pages) |
+| `--include-captions` | Include caption/comment lines in post pages |
+| `--max-media-per-post N` | Limit media items per post (default: 60) |
+| `--sleep SECONDS` | Delay between downloads (default: 0.10) |
+| `--retries N` | Retry failed downloads (default: 3) |
+| `--timeout SECONDS` | HTTP timeout seconds (default: 30) |
 
-  `--retries`                  Retry failed downloads (default 3)
-
-  `--timeout`                  HTTP timeout in seconds (default 30)
-  -----------------------------------------------------------------------
-
-------------------------------------------------------------------------
+---
 
 ## 🔐 Why Local Mirroring Matters
 
-Many CDN hosts block hotlinking (403 errors).
+Many CDN hosts block hotlinking (403 errors). When you use local mirroring, the tool:
 
-When using:
+- Sends Referer/Origin headers (to reduce 403s)
+- Handles `cdn`/`ocdn` variants
+- Retries failed downloads
+- Saves files with hashed filenames
+- Rewrites HTML to local paths
 
-    --download-media
+Result: a true offline archive that does not depend on the original platform staying online.
 
-The tool:
-
--   Sends proper Referer headers
--   Handles cdn/ocdn variants
--   Retries failed downloads
--   Saves files with hashed filenames
--   Rewrites HTML to local paths
-
-Result:\
-A true offline archive that does not depend on the original platform
-staying online.
-
-------------------------------------------------------------------------
+---
 
 ## 📁 Supported Input Format
 
-The JSON files should contain a list of post dictionaries similar to
-what Easy Scraper exports from BDSMLR pages.
+The JSON files should contain a list of post dictionaries similar to what Easy Scraper exports from BDSMLR pages.
 
-The tool expects keys like:
+The tool looks for keys like:
 
--   `post-action-link href`
--   `post-action-date`
--   `magnify href`
--   `sidepostimage src`
--   `tag*`
--   `singlecommentline*`
+- `post-action-link href`
+- `post-action-date`
+- `magnify href`
+- `sidepostimage src`
+- `tag*`
+- `singlecommentline*`
 
-It ignores unknown keys safely.
+Unknown keys are ignored safely.
 
-------------------------------------------------------------------------
+---
 
 ## 🧠 Design Philosophy
 
 This tool is:
 
--   Offline-first
--   Platform-independent
--   Transparent (provenance logged)
--   Static-only
--   No analytics
--   No tracking
--   No cloud dependency
+- Offline-first
+- Platform-independent
+- Transparent (provenance logged)
+- Static-only
+- No analytics
+- No tracking
+- No cloud dependency
 
-It is intended for digital sovereignty and personal archival use.
+It’s intended for digital sovereignty and personal archival use.
 
-------------------------------------------------------------------------
+---
 
 ## ⚖️ Disclaimer
 
-This tool does not scrape websites directly.
+This tool does **not** scrape websites directly. It operates on JSON files that you provide.
 
-It operates on JSON files that you provide.
+You are responsible for:
 
-You are responsible for: - Ensuring you have permission to scrape
-content - Respecting platform terms of service - Respecting copyright
-and privacy laws
+- Ensuring you have permission to scrape content
+- Respecting platform terms of service
+- Respecting copyright and privacy laws
 
-------------------------------------------------------------------------
+---
 
 ## 📜 License
 
