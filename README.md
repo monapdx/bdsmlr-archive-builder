@@ -22,7 +22,7 @@ It turns exported `.json` files into:
 
 I used the Chrome extension:
 
-**Easy Scraper -- One Click Web Scraper**\
+**Easy Scraper**\
 https://chromewebstore.google.com/detail/easy-scraper-one-click-we/cljbfnedccphacfneigoegkiieckjndh
 
 to scrape my own blog pages on `bdsmlr.com` and export the results as
@@ -49,8 +49,13 @@ offline HTML archive.
         provenance.json
         media_map.json
 
-The result: - Works offline - Requires no backend - No database - No
-JavaScript framework - No build tools - Just static files
+The result: 
+- Works offline 
+- Requires no backend 
+- No database 
+- No JavaScript framework 
+- No build tools 
+- Just static files
 
 ------------------------------------------------------------------------
 
